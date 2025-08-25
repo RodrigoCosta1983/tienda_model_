@@ -208,8 +208,11 @@ class _PaymentOptionsSheetState extends State<PaymentOptionsSheet> {
       );
     }
 
+    // Pega o valor do espaçamento de segurança na parte de baixo da tela
+    final bottomSafeArea = MediaQuery.of(context).viewPadding.bottom;
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20,20,20,20 + bottomSafeArea),
       child: Wrap(
         runSpacing: 10,
         children: <Widget>[
