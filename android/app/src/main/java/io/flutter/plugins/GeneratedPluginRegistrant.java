@@ -31,6 +31,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin firebase_core, io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin firebase_messaging, io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.storage.FlutterFirebaseStoragePlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin firebase_storage, io.flutter.plugins.firebase.storage.FlutterFirebaseStoragePlugin", e);
@@ -51,14 +56,34 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin package_info_plus, dev.fluttercommunity.plus.packageinfo.PackageInfoPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new net.nfet.flutter.printing.PrintingPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin printing, net.nfet.flutter.printing.PrintingPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new net.touchcapture.qr.flutterqr.FlutterQrPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin qr_code_scanner, net.touchcapture.qr.flutterqr.FlutterQrPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin shared_preferences_android, io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.tekartik.sqflite.SqflitePlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin sqflite_android, com.tekartik.sqflite.SqflitePlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.flutter.stripe.StripeAndroidPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin stripe_android, com.flutter.stripe.StripeAndroidPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.urllauncher.UrlLauncherPlugin());

@@ -24,6 +24,12 @@
 @import firebase_core;
 #endif
 
+#if __has_include(<firebase_messaging/FLTFirebaseMessagingPlugin.h>)
+#import <firebase_messaging/FLTFirebaseMessagingPlugin.h>
+#else
+@import firebase_messaging;
+#endif
+
 #if __has_include(<firebase_storage/FLTFirebaseStoragePlugin.h>)
 #import <firebase_storage/FLTFirebaseStoragePlugin.h>
 #else
@@ -42,16 +48,40 @@
 @import package_info_plus;
 #endif
 
+#if __has_include(<path_provider_foundation/PathProviderPlugin.h>)
+#import <path_provider_foundation/PathProviderPlugin.h>
+#else
+@import path_provider_foundation;
+#endif
+
 #if __has_include(<printing/PrintingPlugin.h>)
 #import <printing/PrintingPlugin.h>
 #else
 @import printing;
 #endif
 
+#if __has_include(<qr_code_scanner/FlutterQrPlugin.h>)
+#import <qr_code_scanner/FlutterQrPlugin.h>
+#else
+@import qr_code_scanner;
+#endif
+
 #if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
 #import <shared_preferences_foundation/SharedPreferencesPlugin.h>
 #else
 @import shared_preferences_foundation;
+#endif
+
+#if __has_include(<sqflite_darwin/SqflitePlugin.h>)
+#import <sqflite_darwin/SqflitePlugin.h>
+#else
+@import sqflite_darwin;
+#endif
+
+#if __has_include(<stripe_ios/StripeIosPlugin.h>)
+#import <stripe_ios/StripeIosPlugin.h>
+#else
+@import stripe_ios;
 #endif
 
 #if __has_include(<url_launcher_ios/URLLauncherPlugin.h>)
@@ -66,11 +96,16 @@
   [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+  [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
   [FLTFirebaseStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseStoragePlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
+  [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [PrintingPlugin registerWithRegistrar:[registry registrarForPlugin:@"PrintingPlugin"]];
+  [FlutterQrPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterQrPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
+  [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
+  [StripeIosPlugin registerWithRegistrar:[registry registrarForPlugin:@"StripeIosPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
 }
 

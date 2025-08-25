@@ -1,5 +1,4 @@
 // lib/models/customer_performance_model.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomerPerformance {
   final String customerId;
