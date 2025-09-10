@@ -6,24 +6,39 @@ import 'package:tienda_model/widgets/payment_options_sheet.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/cart_item_widget.dart';
 
-class CartScreen extends StatelessWidget {
-  static const routeName = '/cart'; // Usaremos para navegação futura
-
+// 1. Convertido para StatefulWidget
+class CartScreen extends StatefulWidget {
+  static const routeName = '/cart';
   const CartScreen({super.key});
 
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  // 2. Criado o controller para o campo de texto
+  final _notesController = TextEditingController();
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Acessa o nosso provider do carrinho
     final cart = Provider.of<CartProvider>(context);
     final cartItems = cart.items.values.toList();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Seu Carrinho'),
+        actions: [
+          // ... (seu código do botão de limpar carrinho) ...
+        ],
       ),
       body: Column(
         children: <Widget>[
-          // Card com o resumo do total
           Card(
             margin: const EdgeInsets.all(15),
             child: Padding(
@@ -42,21 +57,17 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  // No futuro, este botão levará para a tela de pagamento
                   TextButton(
                     onPressed: () {
-                      // Verifica se o carrinho não está vazio
-                      if (cart.itemCount == 0) {
-                        return; // Não faz nada se não houver itens
-                      }
-                      // Mostra o painel de opções de pagamento
+                      if (cart.itemCount == 0) return;
                       showModalBottomSheet(
                         context: context,
-                        shape: const RoundedRectangleBorder( // Deixa as bordas superiores arredondadas
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                         ),
                         builder: (ctx) {
-                          return const PaymentOptionsSheet();
+                          // 3. Passa o texto das observações para a próxima tela
+                          return PaymentOptionsSheet(notes: _notesController.text);
                         },
                       );
                     },
@@ -67,27 +78,26 @@ class CartScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-
-          // Campo de Observações
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: TextField(
+              // 4. Conecta o controller ao TextField
+              controller: _notesController,
               decoration: InputDecoration(
                 labelText: 'Adicionar observações (opcional)',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              textCapitalization: TextCapitalization.sentences,
             ),
           ),
           const SizedBox(height: 10),
-
-          // Lista dos itens do carrinho
           Expanded(
             child: ListView.builder(
-              itemCount: cart.itemCount,
+              itemCount: cart.items.length,
               itemBuilder: (ctx, i) => CartItemWidget(
-                productId: cart.items.keys.toList()[i],
+                productId: cartItems[i].id,
                 title: cartItems[i].name,
                 quantity: cartItems[i].quantity,
                 price: cartItems[i].price,

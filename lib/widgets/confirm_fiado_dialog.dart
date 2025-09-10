@@ -1,7 +1,5 @@
-// lib/widgets/confirm_fiado_dialog.dart
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Pacote para formatar a data
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/customer_model.dart';
 import '../providers/cart_provider.dart';
@@ -9,10 +7,12 @@ import '../providers/sales_provider.dart';
 
 class ConfirmFiadoDialog extends StatefulWidget {
   final Customer customer;
+  final String notes;
 
   const ConfirmFiadoDialog({
     super.key,
     required this.customer,
+    required this.notes,
   });
 
   @override
@@ -21,33 +21,30 @@ class ConfirmFiadoDialog extends StatefulWidget {
 
 class _ConfirmFiadoDialogState extends State<ConfirmFiadoDialog> {
   DateTime? _selectedDate;
+  var _isLoading = false;
 
-  // Função que abre o calendário nativo do celular
   void _presentDatePicker() {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(), // Não permite selecionar datas passadas
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     ).then((pickedDate) {
-      if (pickedDate == null) {
-        return; // Usuário cancelou
-      }
+      if (pickedDate == null) return;
       setState(() {
-        _selectedDate = pickedDate; // Armazena a data selecionada
+        _selectedDate = pickedDate;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Acessa o carrinho para pegar o valor total
     final cart = Provider.of<CartProvider>(context, listen: false);
 
     return AlertDialog(
       title: const Text('Confirmar Venda Fiado'),
       content: Column(
-        mainAxisSize: MainAxisSize.min, // Faz a coluna se ajustar ao conteúdo
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
@@ -64,7 +61,6 @@ class _ConfirmFiadoDialogState extends State<ConfirmFiadoDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              // Mostra a data selecionada ou um texto padrão
               Text(
                 _selectedDate == null
                     ? 'Nenhuma data'
@@ -80,32 +76,64 @@ class _ConfirmFiadoDialogState extends State<ConfirmFiadoDialog> {
       ),
       actions: <Widget>[
         TextButton(
+          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
-          onPressed: () {
-            Navigator.of(context).pop(); // Fecha apenas este dialog
-          },
         ),
         ElevatedButton(
-          // O botão só fica ativo se uma data for escolhida
-          onPressed: _selectedDate == null
+          onPressed: (_selectedDate == null || _isLoading)
               ? null
-              : () {
-            // TODO: Lógica final para salvar a venda no banco de dados
-            Provider.of<SalesProvider>(context, listen: false).addOrder(
-              cartProducts: cart.items.values.toList(),
-              total: cart.totalAmount,
-              customer: widget.customer,
-              dueDate: _selectedDate!,
-              // TODO: Passar as observações do carrinho para cá
-            );
+              : () async {
+            setState(() => _isLoading = true);
 
-            // Limpa o carrinho após a venda
-            cart.clear();
+            final salesProvider = Provider.of<SalesProvider>(context, listen: false);
 
-            // Fecha todos os painéis e volta para a tela inicial de vendas
-            Navigator.of(context).popUntil((route) => route.isFirst);
+
+
+            try {
+              await salesProvider.addOrder(
+                cartProducts: cart.items.values.toList(),
+                total: cart.totalAmount,
+                customer: widget.customer,
+                dueDate: _selectedDate!,
+                notes: widget.notes,
+              );
+
+              // Se a venda for um sucesso:
+              cart.clear();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Venda finalizada com sucesso!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+                // Fecha TUDO e volta para a tela de vendas
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            } catch (e) {
+              // --- LÓGICA DE ERRO MELHORADA ---
+              if (mounted) {
+                // Fecha TUDO primeiro para não deixar o usuário preso
+                Navigator.of(context).popUntil((route) => route.isFirst);
+
+                // Depois mostra a mensagem de erro clara
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('ERRO: ${e.toString().replaceAll('Exception: ', '')}'),
+                    backgroundColor: Colors.red,
+                    duration: const Duration(seconds: 5), // Mais tempo para ler
+                  ),
+                );
+              }
+            } finally {
+              if (mounted) {
+                setState(() => _isLoading = false);
+              }
+            }
           },
-          child: const Text('Confirmar Venda'),
+          child: _isLoading
+              ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              : const Text('Confirmar Venda'),
         ),
       ],
     );

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/product_model.dart';
 
 class CartItem {
-  final String id;
+  final String id; // Este ID agora será o ID real do produto
   final String name;
   final int quantity;
   final double price;
@@ -23,7 +23,12 @@ class CartProvider with ChangeNotifier {
   }
 
   int get itemCount {
-    return _items.length;
+    // Retorna a quantidade total de itens, não apenas de tipos de produto
+    var totalCount = 0;
+    _items.forEach((key, cartItem) {
+      totalCount += cartItem.quantity;
+    });
+    return totalCount;
   }
 
   double get totalAmount {
@@ -36,7 +41,6 @@ class CartProvider with ChangeNotifier {
 
   void addItem(Product product) {
     if (_items.containsKey(product.id)) {
-      // apenas aumenta a quantidade
       _items.update(
         product.id,
             (existingCartItem) => CartItem(
@@ -47,27 +51,24 @@ class CartProvider with ChangeNotifier {
         ),
       );
     } else {
-      // adiciona um novo item
       _items.putIfAbsent(
         product.id,
             () => CartItem(
-          id: DateTime.now().toString(),
+          id: product.id, // --- CORREÇÃO AQUI --- Usa o ID real do produto
           name: product.name,
           price: product.price,
           quantity: 1,
         ),
       );
     }
-    notifyListeners(); // Notifica os 'ouvintes' (widgets) que o estado mudou
+    notifyListeners();
   }
 
-  // --- NOVO MÉTODO PARA REMOVER UMA UNIDADE ---
   void removeSingleItem(String productId) {
     if (!_items.containsKey(productId)) {
       return;
     }
     if (_items[productId]!.quantity > 1) {
-      // Se a quantidade for maior que 1, apenas diminui
       _items.update(
         productId,
             (existingCartItem) => CartItem(
@@ -78,13 +79,11 @@ class CartProvider with ChangeNotifier {
         ),
       );
     } else {
-      // Se for 1, remove o item completamente
       _items.remove(productId);
     }
     notifyListeners();
   }
 
-  // --- NOVO MÉTODO PARA ADICIONAR UMA UNIDADE (pelo carrinho) ---
   void addSingleItem(String productId) {
     if (!_items.containsKey(productId)) {
       return;
@@ -100,7 +99,6 @@ class CartProvider with ChangeNotifier {
     );
     notifyListeners();
   }
-
 
   void removeItem(String productId) {
     _items.remove(productId);

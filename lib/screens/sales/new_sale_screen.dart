@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:tienda_model/screens/settings_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/product_model.dart';
@@ -11,6 +12,9 @@ import '../cart/cart_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../management/manage_customers_screen.dart';
 import '../management/manage_products_screen.dart';
+import '../reports/abc_report_screen.dart';
+import '../reports/customer_report_screen.dart';
+import '../reports/reports_hub_screen.dart';
 import '../sales/sales_history_screen.dart';
 
 class NewSaleScreen extends StatefulWidget {
@@ -66,7 +70,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
         actions: [
           Consumer<CartProvider>(
             builder: (context, cart, _) => Badge(
-              label: Text(cart.itemCount.toString()),
+              label: Text(cart.items.length.toString()),
               isLabelVisible: cart.itemCount > 0,
               child: IconButton(
                 icon: const Icon(Icons.shopping_cart),
@@ -108,6 +112,16 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.analytics_outlined),
+              title: const Text('Análises e Relatórios'),
+              onTap: () {
+                Navigator.of(context).pop(); // Fecha o drawer
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => const ReportsHubScreen()),
+                );
+              },
+            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.inventory_2),
@@ -129,7 +143,24 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                 );
               },
             ),
+
+
             const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings_outlined), // Ícone de engrenagem
+              title: const Text('Configurações'),
+              onTap: () {
+                // 1. Fecha o menu lateral para uma transição suave
+                Navigator.of(context).pop();
+
+                // 2. Navega para a nova tela de configurações
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.info_outline),
               title: const Text("Sobre"),

@@ -1,0 +1,84 @@
+📄 Política de Privacidade
+
+Última atualização: 18/08/2025
+
+Esta Política de Privacidade descreve como o aplicativo [Gelo Gestor] (doravante denominado "Aplicativo") coleta, usa, armazena e protege as informações dos usuários.
+
+Ao utilizar o Aplicativo, você concorda com os termos desta Política de Privacidade.
+
+1. Informações que coletamos
+
+O Aplicativo pode coletar as seguintes informações:
+
+Informações de autenticação: nome, e-mail e senha (armazenados de forma segura pelo Firebase Authentication).
+
+Dados fornecidos pelo usuário: registros de clientes, produtos, pedidos e vendas inseridos manualmente no aplicativo.
+
+Arquivos e imagens: quando o usuário opta por enviar fotos de produtos ou documentos (armazenados no Firebase Storage).
+
+Informações técnicas: tipo de dispositivo, sistema operacional e identificadores anônimos usados para melhorar a experiência do usuário.
+
+2. Como usamos as informações
+
+As informações coletadas são utilizadas para:
+
+Permitir o login e autenticação do usuário.
+
+Gerenciar clientes, produtos e pedidos dentro do sistema.
+
+Armazenar e organizar dados de vendas de forma segura.
+
+Melhorar a usabilidade e o desempenho do Aplicativo.
+
+Cumprir requisitos legais aplicáveis.
+
+3. Compartilhamento de informações
+
+Não vendemos ou alugamos dados pessoais a terceiros.
+
+Os dados podem ser compartilhados apenas em situações específicas:
+
+Quando exigido por lei ou por ordem judicial.
+
+Para proteger os direitos, propriedade e segurança do Aplicativo e de seus usuários.
+
+Com serviços de terceiros usados pelo aplicativo (ex.: Google Firebase), que tratam os dados de acordo com suas próprias políticas.
+
+4. Armazenamento e segurança
+
+Os dados são armazenados no Google Firebase (Firestore e Storage), que segue padrões de segurança internacionais.
+
+Implementamos medidas técnicas e organizacionais para proteger contra acesso não autorizado, alteração ou exclusão indevida de dados.
+
+5. Retenção de dados
+
+As informações são mantidas enquanto a conta do usuário estiver ativa.
+
+O usuário pode solicitar a exclusão de sua conta e dados associados entrando em contato conosco.
+
+6. Direitos do usuário
+
+O usuário pode:
+
+Acessar, corrigir ou excluir suas informações.
+
+Solicitar a exclusão permanente de sua conta.
+
+Restringir ou retirar o consentimento para o uso de determinados dados.
+
+7. Público infantil
+
+O Aplicativo não é direcionado a crianças menores de 13 anos.
+
+Não coletamos intencionalmente dados de crianças. Caso seja identificado o uso por menores, os dados serão removidos.
+
+8. Alterações nesta política
+
+Esta Política de Privacidade pode ser atualizada periodicamente.
+Recomendamos que o usuário revise esta página regularmente para estar ciente de quaisquer mudanças.
+
+9. Contato
+
+Se tiver dúvidas ou solicitações sobre esta Política de Privacidade, entre em contato:
+
+📧 [contato.rodrigocosta.dev@gmail.com]

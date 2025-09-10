@@ -22,18 +22,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
   TimePeriod _selectedPeriod = TimePeriod.day;
 
   // Função para exibir o gráfico semanal
+  // Em dashboard_screen.dart
+
   void _showWeeklySalesChartDialog(Map<int, double> weeklySalesData) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Vendas da Semana'),
+        // 👇 ADICIONE ESTAS LINHAS PARA MUDAR O FUNDO
+        backgroundColor: Colors.grey[900],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        // 👆 FIM DAS LINHAS ADICIONADAS
+
+        title: const Text('Vendas da Semana', style: TextStyle(color: Colors.white)),
         content: SizedBox(
-            height: 300,
-            width: 400,
-            child: SalesChart(weeklySales: weeklySalesData)),
+          height: 300,
+          width: 400,
+          child: SalesChart(weeklySales: weeklySalesData),
+        ),
         actions: [
           TextButton(
-            child: const Text('Fechar'),
+            child: const Text('Fechar', style: TextStyle(color: Colors.white)),
             onPressed: () => Navigator.of(ctx).pop(),
           ),
         ],
@@ -42,18 +50,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // Função para exibir o gráfico mensal
+
   void _showMonthlySalesChartDialog(Map<int, double> monthlySalesData) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Vendas do Mês (por Semana)'),
+        // 👇 Adicione estas linhas para o estilo escuro
+        backgroundColor: Colors.grey[900],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+
+        title: const Text('Vendas do Mês (por Semana)', style: TextStyle(color: Colors.white)),
         content: SizedBox(
             height: 300,
             width: 400,
             child: MonthlySalesChart(monthlySales: monthlySalesData)),
         actions: [
           TextButton(
-            child: const Text('Fechar'),
+            child: const Text('Fechar', style: TextStyle(color: Colors.white)),
             onPressed: () => Navigator.of(ctx).pop(),
           ),
         ],
@@ -61,40 +74,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Widget para criar os cards de informação
-  Widget _buildInfoCard(BuildContext context,
-      {required String title,
-        required String value,
-        required IconData icon,
-        Color? color,
-        bool isWeb = false}) {
+  // SUGESTÃO DE MELHORIA para o seu _buildInfoCard
+  Widget _buildInfoCard(BuildContext context, {
+    required String title,
+    required String value,
+    required IconData icon,
+    Color? iconColor,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    final cardWidth = isWeb ? 280.0 : double.infinity;
+    return Card(
+      elevation: 2,
+      // Usar a cor do schema para o card, para melhor consistência com o tema
+      color: colorScheme.surface.withOpacity(0.95),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Ícone e Título na mesma linha
+            Row(
+              children: [
+                Icon(icon, size: 24, color: iconColor ?? colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+                ),
+              ],
+            ),
+            const Spacer(), // Usa o espaço disponível para empurrar o valor para baixo
 
-    return SizedBox(
-      width: cardWidth,
-      child: Card(
-        elevation: 4,
-        color: Theme.of(context).cardColor.withOpacity(0.9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(icon, size: 40, color: color ?? Theme.of(context).primaryColor),
-              const SizedBox(height: 15),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+            // Valor com FittedBox para autoajuste
+            SizedBox(
+              height: 40, // Altura fixa para o valor se ajustar dentro
+              child: FittedBox(
+                fit: BoxFit.contain,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  value,
+                  style: textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
               ),
-              const SizedBox(height: 5),
-              Text(
-                value,
-                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -155,6 +180,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       return orderDate.isAfter(startOfWeek.subtract(const Duration(days: 1)));
                     case TimePeriod.month:
                       return orderDate.month == today.month && orderDate.year == today.year;
+                    default:
+                      return false;
                   }
                 }).fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
 
@@ -163,6 +190,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   case TimePeriod.day: salesTitle = 'Vendas de Hoje'; break;
                   case TimePeriod.week: salesTitle = 'Vendas da Semana'; break;
                   case TimePeriod.month: salesTitle = 'Vendas do Mês'; break;
+                  default: salesTitle = 'Vendas';
                 }
 
                 final Map<int, double> weeklySalesSummary = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
@@ -193,17 +221,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     salesCardOnTap = () => _showMonthlySalesChartDialog(monthlySalesSummary);
                     break;
                   case TimePeriod.day:
+                  default:
                     salesCardOnTap = () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => const SalesHistoryScreen(filter: SalesHistoryFilter.today),
                     ));
                     break;
                 }
 
-                 List<Widget> infoCards(bool isWebLayout) => [
+                final List<Widget> infoCards = [
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: salesCardOnTap,
-                    child: _buildInfoCard(context, title: salesTitle, value: 'R\$ ${salesFiltered.toStringAsFixed(2)}', icon: Icons.point_of_sale, isWeb: isWebLayout),
+                    child: _buildInfoCard(context, title: salesTitle, value: 'R\$ ${salesFiltered.toStringAsFixed(2)}', icon: Icons.point_of_sale),
                   ),
                   Consumer<CashFlowProvider>(
                     builder: (context, cashFlowData, child) {
@@ -212,73 +241,77 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         title: 'Caixa Atual',
                         value: 'R\$ ${cashFlowData.currentBalance.toStringAsFixed(2)}',
                         icon: Icons.wallet_sharp,
-                        color: Colors.green,
-                        isWeb: isWebLayout,
+                        iconColor: Colors.green,
                       );
                     },
                   ),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const SalesHistoryScreen(filter: SalesHistoryFilter.pending))),
-                    child: _buildInfoCard(context, title: 'Contas a Receber (Fiado)', value: 'R\$ ${pendingFiado.toStringAsFixed(2)}', icon: Icons.receipt_long, color: Colors.orange, isWeb: isWebLayout),
+                    child: _buildInfoCard(context, title: 'Contas a Receber (Fiado)', value: 'R\$ ${pendingFiado.toStringAsFixed(2)}', icon: Icons.receipt_long, iconColor: Colors.orange),
                   ),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const SalesHistoryScreen(filter: SalesHistoryFilter.overdue))),
-                    child: _buildInfoCard(context, title: 'Contas Vencidas', value: '$overdueCount', icon: Icons.warning_amber_rounded, color: Colors.red, isWeb: isWebLayout),
+                    child: _buildInfoCard(context, title: 'Contas Vencidas', value: '$overdueCount', icon: Icons.warning_amber_rounded, iconColor: Colors.red),
                   ),
                 ];
 
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      Center(
-                        child: ToggleButtons(
-                          isSelected: [
-                            _selectedPeriod == TimePeriod.day,
-                            _selectedPeriod == TimePeriod.week,
-                            _selectedPeriod == TimePeriod.month,
-                          ],
-                          onPressed: (index) {
-                            setState(() {
-                              if (index == 0) _selectedPeriod = TimePeriod.day;
-                              if (index == 1) _selectedPeriod = TimePeriod.week;
-                              if (index == 2) _selectedPeriod = TimePeriod.month;
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(8),
-                          children: const [
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('Hoje')),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('Semana')),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('Mês')),
-                          ],
-                        ),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+                      child: ToggleButtons(
+                        isSelected: [
+                          _selectedPeriod == TimePeriod.day,
+                          _selectedPeriod == TimePeriod.week,
+                          _selectedPeriod == TimePeriod.month,
+                        ],
+                        onPressed: (index) {
+                          setState(() {
+                            if (index == 0) _selectedPeriod = TimePeriod.day;
+                            if (index == 1) _selectedPeriod = TimePeriod.week;
+                            if (index == 2) _selectedPeriod = TimePeriod.month;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        children: const [
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('Hoje')),
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('Semana')),
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('Mês')),
+                        ],
                       ),
-                      const SizedBox(height: 10),
-                      LayoutBuilder(
+                    ),
+                    Expanded(
+                      child: LayoutBuilder(
                         builder: (context, constraints) {
-                          if (constraints.maxWidth < 300) {
-                            // Layout para Celular
-                            return Column(
-                              children: infoCards(false).map((card) => Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: card,
-                              )).toList(),
+                          if (constraints.maxWidth > 700) {
+                            return SingleChildScrollView(
+                              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                              child: Wrap(
+                                spacing: 20.0,
+                                runSpacing: 20.0,
+                                alignment: WrapAlignment.center,
+                                children: infoCards.map((card) => SizedBox(width: 280, child: card)).toList(),
+                              ),
                             );
                           } else {
-                            // Layout para Web/Tablet
-                            return Wrap(
-                              spacing: 20.0,
-                              runSpacing: 20.0,
-                              alignment: WrapAlignment.center,
-                              children: infoCards(true),
+                            return GridView.builder(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: constraints.maxWidth > 420 ? 2 : 1,
+                                childAspectRatio: constraints.maxWidth > 420 ? 1.3 : 1.8,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                              ),
+                              itemCount: infoCards.length,
+                              itemBuilder: (context, index) => infoCards[index],
                             );
                           }
                         },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),

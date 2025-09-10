@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
+
         // A tela inicial agora é a nossa SplashScreen
         home: const SplashScreen(),
       ),
